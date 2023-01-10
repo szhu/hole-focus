@@ -11,48 +11,84 @@
       border: 1px solid gray;
       height: 100%;
       box-sizing: border-box;
-      /* border-radius: 10px; */
+    "
+    onmousemove='
+      handleMouseMove(event, event.buttons === 1 ? "bottom-right" : null);
+    '
+    onmousedown='
+      handleMouseMove(event, "bottom-right");
+      handleMouseMove(event, "top-left");
+    '
+    onmouseup='
+      handleMouseMove(event, "bottom-right");
+    '
+    onkeydown="
+      // event.clientX = window.lastClientX;
+      // event.clientY = window.lastClientY;
+      // handleMouseMove(event);
     "
   >
     <div
+      id="hole"
       style="
-        /* 3x3 Grid */
-        display: grid;
-        grid-template-columns: auto auto auto;
-        grid-template-rows: auto auto auto;
+        position: absolute;
+        left: 12px;
+        right: 34px;
+        width: 56px;
+        height: 78px;
+        outline: 10000px solid #00000088;
+        background: none;
       "
-    >
-      <textarea
-        style="
-          grid-row: 1;
-          grid-column: 1;
-          height: 100%;
-          width: 100%;
-          background: blue;
-          display: block;
-        "
-      >
-hello!!</textarea
-      >
-      <textarea
-        style="
-          grid-row: 2;
-          grid-column: 2;
-          height: 100%;
-          width: 100%;
-          /* background: yellow; */
-          outline: 10000px solid white;
-          background: none;
-          color: transparent;
-          display: block;
-          user-select: none;
-        "
-      >
-hello!!</textarea
-      >
-    </div>
+    ></div>
 
     <script>
+      // Set the focus to be in the middle third of the screen.
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      document.querySelector("#hole").style.left = width / 3 + "px";
+      document.querySelector("#hole").style.top = height / 3 + "px";
+      document.querySelector("#hole").style.width = width / 3 + "px";
+      document.querySelector("#hole").style.height = height / 3 + "px";
+
+      function handleMouseMove(event, mode) {
+        window.lastClientX = event.clientX;
+        window.lastClientY = event.clientY;
+
+        if (window.inBackground) return;
+
+        let hole = document.querySelector("#hole");
+
+        // if (event.metaKey) {
+        //   hole.style.left = event.clientX + "px";
+        //   hole.style.top = event.clientY + "px";
+        // }
+
+        if (false && mode == null) {
+          if (event.shiftKey) mode = "top-left";
+          if (event.altKey) mode = "bottom-right";
+        }
+
+        if (mode === "top-left") {
+          let right =
+            parseFloat(hole.style.left) + parseFloat(hole.style.width);
+          let bottom =
+            parseFloat(hole.style.top) + parseFloat(hole.style.height);
+
+          hole.style.left = event.clientX + "px";
+          hole.style.top = event.clientY + "px";
+
+          hole.style.width = right - event.clientX + "px";
+          hole.style.height = bottom - event.clientY + "px";
+        }
+
+        if (mode === "bottom-right") {
+          let left = parseFloat(hole.style.left);
+          let top = parseFloat(hole.style.top);
+          hole.style.width = event.clientX - left + "px";
+          hole.style.height = event.clientY - top + "px";
+        }
+      }
+
       // You can also require other files to run in this process
       require("./renderer.js");
     </script>

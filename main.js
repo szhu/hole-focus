@@ -23,16 +23,16 @@ function createWindow() {
     height: 600,
     transparent: true,
     roundedCorners: false,
+    hasShadow: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    },
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "index.html"),
-      protocol: "file:",
-      slashes: true,
-    })
-  );
+  mainWindow.loadURL(new URL("index.html", "file:///" + __dirname + "/").href);
 
   mainWindow.setAlwaysOnTop(true);
   // mainWindow.setIgnoreMouseEvents(true);
@@ -46,15 +46,18 @@ function createWindow() {
   });
 
   mainWindow.on("move", () => {
+    mainWindow.setResizable(true);
     mainWindow.maximize();
+    mainWindow.setResizable(false);
   });
 
-  mainWindow.on("minimize", function (event) {
-    console.log("Clickthrough disabled");
-    mainWindow.setIgnoreMouseEvents(false);
-  });
+  // mainWindow.on("minimize", function (event) {
+  //   console.log("Clickthrough disabled");
+  //   mainWindow.setIgnoreMouseEvents(false);
+  // });
 
   mainWindow.maximize();
+  mainWindow.setResizable(false);
 }
 
 // This method will be called when Electron has finished
